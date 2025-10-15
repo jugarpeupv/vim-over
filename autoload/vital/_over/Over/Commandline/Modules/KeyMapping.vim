@@ -103,11 +103,16 @@ function! s:_auto_cmap()
 	let cmap_info = s:Keymapping.rhs_key_list("c", 0, 1)
 	" vital-over currently doesn't support <buffer> mappings
 	for c in filter(cmap_info, "v:val['buffer'] ==# 0")
-		let cmaps[s:Keymapping.escape_special_key(c['lhs'])] = {
-		\   'noremap' : c['noremap'],
-		\   'key'  : s:Keymapping.escape_special_key(s:_convert_sid(c['rhs'], c['sid'])),
-		\   'expr' : s:Keymapping.escape_special_key(c['expr']),
-		\ }
+    if has_key(c, 'rhs')
+      " use c['rhs']
+      let cmaps[s:Keymapping.escape_special_key(c['lhs'])] = {
+            \   'noremap' : c['noremap'],
+            \   'key'  : s:Keymapping.escape_special_key(s:_convert_sid(c['rhs'], c['sid'])),
+            \   'expr' : s:Keymapping.escape_special_key(c['expr']),
+            \ }
+    else
+      " handle missing rhs
+    endif
 	endfor
 	return cmaps
 endfunction
